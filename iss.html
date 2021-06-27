@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+
+
+    <style>
+        #mapISS {
+            height: 300px;
+            width: 700px;
+
+        }
+    </style>
+
+    <title>
+        where is the ISS?
+    </title>
+    <h1>where is the ISS?</h1>
+</head>
+
+<body>
+
+
+
+    <p>latitude: <span id="lat"></span>&deg </p>
+    <p>longitude: <span id="long"></span>&deg </p>
+
+    <div id="mapISS"></div>
+    <script>
+
+        const mymap = L.map('mapISS').setView([0, 0], 1);
+        const marker = L.marker([0, 0]).addTo(mymap);
+        const attribution = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+        const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        const tiles = L.tileLayer(tileUrl, { attribution });
+
+        tiles.addTo(mymap)
+
+
+
+        const api = 'https://api.wheretheiss.at/v1/satellites/25544'
+
+        let firstTime = true;
+        getISS()
+        async function getISS() {
+            const response = await fetch(api)
+            const data = await response.json();
+            const { latitude, longitude } = data
+
+
+            marker.setLatLng([latitude, longitude]);
+            if (firstTime) {
+
+                mymap.setView([latitude, longitude], 2);
+                firstTime = false;
+            }
+            document.getElementById('lat').textContent = latitude.toFixed(2);
+            document.getElementById('long').textContent = longitude.toFixed(2);
+
+            console.log(latitude);
+            console.log(longitude);
+
+
+        }
+
+
+
+//setInterval(getISS, 1000);
+
+
+
+
+    </script>
+</body>
+
+</html>
